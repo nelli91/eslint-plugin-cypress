@@ -1,6 +1,27 @@
 const globals = require('globals')
+const pkgApp = require('./package.json')
 
-module.exports = {
+const RecommendedRules = {
+  'cypress/no-assigning-return-values': 'error',
+  'cypress/no-unnecessary-waiting': 'error',
+  'cypress/no-async-tests': 'error',
+  'cypress/unsafe-to-chain-command': 'error'
+}
+
+const allRules = {
+  ...RecommendedRules,
+  'cypress/no-async-before': 'error',
+  'cypress/assertion-before-screenshot': 'error',
+  'cypress/require-data-selectors': 'error',
+  'cypress/no-force': 'error',
+  'cypress/no-pause': 'error'
+}
+
+const plugin = {
+  meta: {
+    name: "cypress",
+    version: pkgApp.version
+  },
   rules: {
     'no-assigning-return-values': require('./lib/rules/no-assigning-return-values'),
     'unsafe-to-chain-command': require('./lib/rules/unsafe-to-chain-command'),
@@ -10,11 +31,50 @@ module.exports = {
     'assertion-before-screenshot': require('./lib/rules/assertion-before-screenshot'),
     'require-data-selectors': require('./lib/rules/require-data-selectors'),
     'no-force': require('./lib/rules/no-force'),
-    'no-pause': require('./lib/rules/no-pause'),
+    'no-pause': require('./lib/rules/no-pause')
   },
   configs: {
-    recommended: require('./lib/config/recommended'),
+    'legacy-recommended': {
+      plugins: ['cypress'],
+      env: {
+        'cypress/globals': true,
+      },
+      rules: RecommendedRules
+    },
+    'legacy-all': {
+      plugins: ['cypress'],
+      rules: allRules
+    },
+    'recommended': {
+      get cypress() {
+        return plugin
+      },
+      rules: RecommendedRules,
+      languageOptions: {
+        globals: {
+          'cypress/globals': true
+        }
+      }
+    },
+    'all': {
+      get cypress() {
+        return plugin
+      },
+      rules: allRules
+    },
+    languageOptions: {
+      globals: Object.assign({
+        cy: false,
+        Cypress: false,
+        expect: false,
+        assert: false,
+        chai: false,
+      }, globals.browser, globals.mocha),
+      ecmaVersion: 2019,
+      sourceType: 'module'
+    }
   },
+  // For backwards compatibility
   environments: {
     globals: {
       globals: Object.assign({
@@ -31,3 +91,5 @@ module.exports = {
     },
   },
 }
+
+module.exports = plugin
