@@ -6,7 +6,13 @@ Note: If you installed ESLint globally then you must also install `eslint-plugin
 
 ## Installation
 
-Prerequisites: [ESLint](https://www.npmjs.com/package/eslint) `v7` or `v8`. ESLint `v9` is **not** supported yet.
+First you need to install [ESLint](https://eslint.org/):
+
+```sh
+npm i eslint --save-dev
+```
+
+Then, install 'eslint-plugin-cypress'
 
 ```sh
 npm install eslint-plugin-cypress --save-dev
@@ -18,13 +24,50 @@ yarn add eslint-plugin-cypress --dev
 
 ## Usage
 
-Add an `.eslintrc.json` file to your `cypress` directory with the following:
+Make sure you're running eslint `v9.0.0` or higher for the latest version of this plugin to work. The following example is how your `eslint.config.js` should be setup for this plugin to work for you.
+
+```js
+import cypress from "eslint-plugin-cypress";
+
+export default [
+  {
+    files: ["tests/**"], // or any other pattern
+    plugins: {
+      cypress
+    },
+    rules: {
+      ...cypress.configs.recommended.rules, // you can also use cypress.configs.all.rules to enable all rules
+      "cypress/no-unnecessary-waiting": "off" // you can also modify rules' behavior using option like this
+    }
+  }
+];
+```
+
+If you're not using the latest version of eslint (version `v8.57.0` or lower) you can setup this plugin using the following configuration
+
+Add `cypress` to the plugins section of your `.eslintrc` configuration file. You can omit the `eslint-plugin-` prefix:
 
 ```json
 {
-  "plugins": [
-    "cypress"
-  ]
+  "plugins": ["cypress"]
+}
+```
+
+Then configure the rules you want to use under the rules section.
+
+```json
+{
+  "rules": {
+    "cypress/no-unnecessary-waiting": "off"
+  }
+}
+```
+
+If you're using old Eslint configuration, make sure to use legacy key like the following
+
+```js
+{
+  "extends": ["plugin:cypress/recommended-legacy"] // or all-legacy
 }
 ```
 
@@ -51,18 +94,6 @@ You can allow certain globals provided by Cypress:
   "env": {
     "cypress/globals": true
   }
-}
-```
-
-## Recommended configuration
-
-Use the recommended configuration and you can forego configuring _plugins_, _rules_, and _env_ individually. See below for which rules are included.
-
-```json
-{
-  "extends": [
-    "plugin:cypress/recommended"
-  ]
 }
 ```
 

@@ -1,7 +1,7 @@
 const globals = require('globals')
 const pkgApp = require('./package.json')
 
-const RecommendedRules = {
+const recommendedRules = {
   'cypress/no-assigning-return-values': 'error',
   'cypress/no-unnecessary-waiting': 'error',
   'cypress/no-async-tests': 'error',
@@ -9,13 +9,21 @@ const RecommendedRules = {
 }
 
 const allRules = {
-  ...RecommendedRules,
+  ...recommendedRules,
   'cypress/no-async-before': 'error',
   'cypress/assertion-before-screenshot': 'error',
   'cypress/require-data-selectors': 'error',
   'cypress/no-force': 'error',
   'cypress/no-pause': 'error'
 }
+
+const customGlobals = Object.assign({
+  cy: false,
+  Cypress: false,
+  expect: false,
+  assert: false,
+  chai: false,
+}, globals.browser, globals.mocha)
 
 const plugin = {
   meta: {
@@ -34,14 +42,14 @@ const plugin = {
     'no-pause': require('./lib/rules/no-pause')
   },
   configs: {
-    'legacy-recommended': {
+    'recommended-legacy': {
       plugins: ['cypress'],
       env: {
         'cypress/globals': true,
       },
-      rules: RecommendedRules
+      rules: recommendedRules
     },
-    'legacy-all': {
+    'all-legacy': {
       plugins: ['cypress'],
       rules: allRules
     },
@@ -49,7 +57,7 @@ const plugin = {
       get cypress() {
         return plugin
       },
-      rules: RecommendedRules,
+      rules: recommendedRules,
       languageOptions: {
         globals: {
           'cypress/globals': true
@@ -63,13 +71,7 @@ const plugin = {
       rules: allRules
     },
     languageOptions: {
-      globals: Object.assign({
-        cy: false,
-        Cypress: false,
-        expect: false,
-        assert: false,
-        chai: false,
-      }, globals.browser, globals.mocha),
+      globals: customGlobals,
       ecmaVersion: 2019,
       sourceType: 'module'
     }
@@ -77,13 +79,7 @@ const plugin = {
   // For backwards compatibility
   environments: {
     globals: {
-      globals: Object.assign({
-        cy: false,
-        Cypress: false,
-        expect: false,
-        assert: false,
-        chai: false,
-      }, globals.browser, globals.mocha),
+      globals: customGlobals,
       parserOptions: {
         ecmaVersion: 2019,
         sourceType: 'module',
