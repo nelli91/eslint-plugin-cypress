@@ -39,7 +39,14 @@ module.exports = [
                     "allowModules": ["jest-config"] 
                 }
             ],
-            "n/no-unpublished-require": "off",
+            "n/no-unpublished-require": ["error", {
+                "allowModules": [
+                    "@eslint/js", 
+                    "eslint-plugin-eslint-plugin", 
+                    "eslint-plugin-mocha", 
+                    "eslint-plugin-n"
+                ]
+            }],
             "no-redeclare": "off",
             "mocha/no-mocha-arrows": "off",
             "mocha/no-setup-in-describe": "off"
