@@ -50,7 +50,7 @@ ruleTester.run('action-ends-chain', rule, {
       code: 'cy.get("new-todo").customPress("Enter").customScroll();',
       languageOptions,
       errors,
-      options: [{ methods: [/customPress/, /customScroll/] }],
+      options: [{ methods: ['customPress', 'customScroll'] }],
     },
   ],
 })
